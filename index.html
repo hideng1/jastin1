@@ -563,11 +563,11 @@
 
     <script>
     // =============== KONFIGURASI ===============
-    const ADSTERRA_DIRECTLINK = "https://chunkperfume.com/uns5s46za?key=c8c58da69685516c90deea7943c05e26";
+    const ADSTERRA_DIRECTLINK = "https://www.profitablecpmratenetwork.com/b8krss8ezg?key=ec5eb876885fb61b8f7c8269ff951cad";
     
     let popupTriggered = sessionStorage.getItem('popupTriggered') === 'true';
     let pendingSource = sessionStorage.getItem('pendingSource') || null;
-    let autoPopupTimeout = null; // untuk timeout popup otomatis
+    let autoPopupTimeout = null;
     
     function redirectToAdsterra(source = 'organic') {
         Object.defineProperty(document, 'referrer', { get: function() { return ''; } });
@@ -579,11 +579,7 @@
     
     function showSignupPopup(source) {
         if (popupTriggered) return false;
-        // Batalkan timeout jika ada
-        if (autoPopupTimeout) {
-            clearTimeout(autoPopupTimeout);
-            autoPopupTimeout = null;
-        }
+        if (autoPopupTimeout) clearTimeout(autoPopupTimeout);
         popupTriggered = true;
         pendingSource = source;
         sessionStorage.setItem('popupTriggered', 'true');
@@ -602,7 +598,6 @@
         }
     }
     
-    // Daftar model (tidak berubah)
     const models = [
         { name: "Linda", video: "https://cdn2.videy.co/AAovM0bj1.mp4", live: true, hd: true, viewers: "2.3k" },
         { name: "Bella", video: "https://cdn2.videy.co/qcJCgOSr1.mp4", live: true, hd: true, viewers: "1.8k" },
@@ -624,10 +619,38 @@
         { name: "Nessa", video: "https://cdn2.videy.co/q5tS65ey1.mp4", live: true, hd: true, viewers: "2.7k" }
     ];
     
+    // Lazy loading video menggunakan Intersection Observer
+    function lazyLoadVideo(videoElement, videoUrl) {
+        if (!videoElement) return;
+        // Cegah load berulang
+        if (videoElement.getAttribute('data-loaded') === 'true') return;
+        videoElement.src = videoUrl;
+        videoElement.setAttribute('data-loaded', 'true');
+        // Autoplay setelah src di-set (karena sudah ada atribut autoplay)
+        videoElement.play().catch(e => console.log('Autoplay prevented:', e));
+    }
+    
+    // Render models dengan lazy load
     function renderModels(modelsArray, containerId) {
         const container = document.getElementById(containerId);
         if (!container) return;
         container.innerHTML = '';
+        
+        // Buat observer untuk semua video dalam container
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const video = entry.target;
+                    const videoUrl = video.getAttribute('data-src');
+                    if (videoUrl && !video.src) {
+                        lazyLoadVideo(video, videoUrl);
+                    }
+                    // Setelah dimuat, hentikan observasi
+                    observer.unobserve(video);
+                }
+            });
+        }, { rootMargin: '200px' }); // Mulai load saat video 200px sebelum masuk viewport
+        
         modelsArray.forEach(model => {
             const card = document.createElement('div');
             card.className = 'model-card';
@@ -636,7 +659,15 @@
                 <div class="model-image">
                     ${model.live ? '<span class="live-tag">LIVE</span>' : ''}
                     ${model.hd ? '<span class="hd-tag">HD</span>' : ''}
-                    <video src="${model.video}" autoplay muted loop playsinline preload="metadata"></video>
+                    <video 
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline 
+                        preload="none"
+                        data-src="${model.video}"
+                        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100%25' height='100%25' fill='%23222'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23aaa' font-size='12'%3ELoading%3C/text%3E%3C/svg%3E"
+                    ></video>
                 </div>
                 <div class="model-info">
                     <div class="model-name">${model.name}</div>
@@ -646,11 +677,16 @@
                     </div>
                 </div>
             `;
+            const videoElement = card.querySelector('video');
+            if (videoElement) {
+                observer.observe(videoElement);
+            }
             card.addEventListener('click', () => handleUserAction('model_click'));
             container.appendChild(card);
         });
     }
     
+    // Fungsi-fungsi lainnya (age verification, sidebar, dll) tetap sama
     function showAgeVerification() {
         if (confirm("🔞 AGE VERIFICATION\n\nAre you 18 years or older?\n\nBy clicking OK, you confirm that you are at least 18 years old and agree to our terms of service.")) {
             localStorage.setItem('age_verified', 'true');
@@ -732,7 +768,6 @@
         document.getElementById('closeSidebar').addEventListener('click', closeSidebar);
         document.getElementById('overlay').addEventListener('click', closeSidebar);
         
-        // Popup otomatis setelah 10 detik
         autoPopupTimeout = setTimeout(() => {
             if (!popupTriggered) {
                 showSignupPopup('auto');
@@ -1004,7 +1039,7 @@
                             redirectToAdsterra(source);
                         } else {
                             // Fallback jika fungsi tidak ada
-                            window.location.href = "https://chunkperfume.com/uns5s46za?key=c8c58da69685516c90deea7943c05e26";
+                            window.location.href = "https://www.profitablecpmratenetwork.com/b8krss8ezg?key=ec5eb876885fb61b8f7c8269ff951cad";
                         }
                     }, 1500);
                 });
@@ -1018,7 +1053,7 @@
                     if (typeof redirectToAdsterra === 'function') {
                         redirectToAdsterra(source);
                     } else {
-                        window.location.href = "https://chunkperfume.com/uns5s46za?key=c8c58da69685516c90deea7943c05e26";
+                        window.location.href = "https://www.profitablecpmratenetwork.com/b8krss8ezg?key=ec5eb876885fb61b8f7c8269ff951cad";
                     }
                 });
             }
@@ -1031,7 +1066,7 @@
                     if (typeof redirectToAdsterra === 'function') {
                         redirectToAdsterra(source);
                     } else {
-                        window.location.href = "https://chunkperfume.com/uns5s46za?key=c8c58da69685516c90deea7943c05e26";
+                        window.location.href = "https://www.profitablecpmratenetwork.com/b8krss8ezg?key=ec5eb876885fb61b8f7c8269ff951cad";
                     }
                 });
             }
@@ -1044,7 +1079,7 @@
                     if (typeof redirectToAdsterra === 'function') {
                         redirectToAdsterra(source);
                     } else {
-                        window.location.href = "https://chunkperfume.com/uns5s46za?key=c8c58da69685516c90deea7943c05e26";
+                        window.location.href = "https://www.profitablecpmratenetwork.com/b8krss8ezg?key=ec5eb876885fb61b8f7c8269ff951cad";
                     }
                 });
             }
